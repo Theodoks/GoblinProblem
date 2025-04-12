@@ -12,14 +12,15 @@ class Button:
     rect.centerx = x
     rect.centery = y
 
-    def __init__(self, Text, X, Y):
+    def __init__(self, Text, X, Y, color=(0, 255, 0)):
         self.text = Text
         self.x = X
         self.y = Y
-        self.Btn = self.font.render(Text, 1, (0, 255, 0))
+        self.Btn = self.font.render(Text, 1, color)
         self.rect = self.Btn.get_rect()
         self.rect.centerx = self.x
         self.rect.centery = self.y
+
 
     def render(self):
         window.blit(self.Btn, self.rect)
@@ -126,6 +127,14 @@ class Player:
         else:
             return 0
 
+    def detectDeath(self, goblinAngle):
+        x = self.x - width / 2
+        y = self.y - height / 2
+        if math.sqrt(x ** 2 + y ** 2) >= radius - 3 and abs(self.getAngle() - goblinAngle) < 0.05:
+            return 1
+        else:
+            return 0
+
     def __del__(self):
         return 0
 
@@ -198,8 +207,9 @@ class Game:
             if abs(goblin.angle % (math.pi * 2) - player.getAngle()) > 0.001:
                 goblin.update(player.getAngle())
 
-            if player.detectWin():
+            if player.detectWin() or player.detectDeath(goblin.angle):
                 win = Button("ESCAPED!", width/2, height/2)
+                death = Button("EATEN!", width/2, height/2, (200, 60, 0))
                 while True:
 
                     for event in pygame.event.get():
@@ -216,17 +226,20 @@ class Game:
                         print(x, y)
 
                     pygame.draw.circle(window, (0, 64, 200), (width / 2, height / 2), radius)
-                    pygame.draw.circle(window, (255, 0, 0), (width / 2, height / 2), radius * (1 / goblinSpeed))
+                    pygame.draw.circle(window, (255, 255, 255), (width / 2, height / 2), radius * (1 / goblinSpeed), 1)
                     player.render()
                     goblin.render()
-                    win.render()
+                    if player.detectWin():
+                        win.render()
+                    else:
+                        death.render()
 
                     pygame.display.flip()
                     window.fill((0, 0, 0))
                     clock.tick(60)
 
             pygame.draw.circle(window, (0, 64, 200), (width/2, height/2), radius)
-            pygame.draw.circle(window, (255, 0, 0), (width / 2, height / 2), radius * (1 / goblinSpeed))
+            pygame.draw.circle(window, (255, 255, 255), (width / 2, height / 2), radius * (1 / goblinSpeed), 1)
             player.render()
             goblin.render()
             exitBtn.render()

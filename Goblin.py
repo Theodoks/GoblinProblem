@@ -27,18 +27,18 @@ class Slider:
         self.Val = self.font.render(str(round(self.minVal + (self.maxVal - self.minVal) * self.pos, 2)), 1, self.color)
         self.valrect = self.Val.get_rect()
         self.valrect.centerx = self.x + self.length/2 + 30
-        self.valrect.centery = self.y + 30
+        self.valrect.centery = self.y + 35
 
     def render(self):
         window.blit(self.Btn, self.rect)
         self.Val = self.font.render(str(round(self.minVal + (self.maxVal - self.minVal) * self.pos, 2)), 1, self.color)
         window.blit(self.Val, self.valrect)
 
-        pygame.draw.line(window, self.color, (self.x - self.length / 2, self.y + 30), (self.x + self.length/2, self.y + 30), 10)
-        pygame.draw.circle(window, self.color, (self.x - self.length/2 + self.length * self.pos, self.y + 30), 12)
+        pygame.draw.line(window, self.color, (self.x - self.length / 2, self.y + 35), (self.x + self.length/2, self.y + 35), 10)
+        pygame.draw.circle(window, self.color, (self.x - self.length/2 + self.length * self.pos, self.y + 35), 12)
 
     def isClicked(self, mouseX, mouseY):
-        if self.x - self.length / 2 < mouseX < self.x + self.length/2 and self.y + 20 < mouseY < self.y + 40:
+        if self.x - self.length / 2 < mouseX < self.x + self.length/2 and self.y + 25 < mouseY < self.y + 45:
             return 1
         else:
             return 0
@@ -89,9 +89,9 @@ class Button:
 class MainMenu:
     def __init__(self):
         font = pygame.font.Font(None, 48)
-        exitBtn = Button("EXIT", width / 2, height / 2 + 50)
-        tryBtn = Button("TRY", width / 2, height / 2)
-        speedSlider = Slider("GOBLIN SPEED", width / 2, height / 2 - 100, 1, 5)
+        exitBtn = Button("ВЫХОД", width / 2, height / 2 + 50)
+        tryBtn = Button("НАЧАТЬ", width / 2, height / 2)
+        speedSlider = Slider("СКОРОСТЬ ГОБЛИНА", width / 2, height / 2 - 100, 1, 5)
         while True:
 
             for event in pygame.event.get():
@@ -244,7 +244,7 @@ class Goblin:
 class Game:
     def __init__(self, goblinSpeed, assist):
 
-        exitBtn = Button("EXIT", 50,  30)
+        exitBtn = Button("ВЫХОД", 70,  30)
         player = Player(width/2, height/2, speed)
         goblin = Goblin(0, goblinSpeed * speed)
         clicking = 0
@@ -276,8 +276,8 @@ class Game:
                 goblin.update(player.getAngle())
 
             if player.detectWin() or player.detectDeath(goblin.angle):
-                win = Button("ESCAPED!", width/2, height/2)
-                death = Button("EATEN!", width/2, height/2, (200, 60, 0))
+                win = Button("УСПЕХ!", width/2, height/2)
+                death = Button("ВЫ БЫЛИ СЪЕДЕНЫ!", width/2, height/2, (200, 60, 0))
                 while True:
 
                     for event in pygame.event.get():

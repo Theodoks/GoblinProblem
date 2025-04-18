@@ -1,6 +1,56 @@
 import sys, math, pygame
 pygame.init()
 
+class Slider:
+    text = "Default slider"
+    font = pygame.font.Font(None, 38)
+    x = 0
+    y = 0
+    length = 180
+    pos = 0
+    color = (0, 255, 0)
+    interacting = 0
+    minVal = 0
+    maxVal = 100
+
+    def __init__(self, Text, X, Y, minVal = 0, maxVal = 100, color=(0, 255, 0)):
+        self.text = Text
+        self.x = X
+        self.y = Y
+        self.Btn = self.font.render(Text, 1, color)
+        self.rect = self.Btn.get_rect()
+        self.rect.centerx = self.x
+        self.rect.centery = self.y
+        self.minVal = minVal
+        self.maxVal = maxVal
+
+        self.Val = self.font.render(str(round(self.minVal + (self.maxVal - self.minVal) * self.pos, 2)), 1, self.color)
+        self.valrect = self.Val.get_rect()
+        self.valrect.centerx = self.x + self.length/2 + 30
+        self.valrect.centery = self.y + 30
+
+    def render(self):
+        window.blit(self.Btn, self.rect)
+        self.Val = self.font.render(str(round(self.minVal + (self.maxVal - self.minVal) * self.pos, 2)), 1, self.color)
+        window.blit(self.Val, self.valrect)
+
+        pygame.draw.line(window, self.color, (self.x - self.length / 2, self.y + 30), (self.x + self.length/2, self.y + 30), 10)
+        pygame.draw.circle(window, self.color, (self.x - self.length/2 + self.length * self.pos, self.y + 30), 12)
+
+    def isClicked(self, mouseX, mouseY):
+        if self.x - self.length / 2 < mouseX < self.x + self.length/2 and self.y + 20 < mouseY < self.y + 40:
+            return 1
+        else:
+            return 0
+
+    def move(self, mouseX, mouseY):
+        if mouseX > self.x + self.length/2:
+            self.pos = 1.0
+        elif mouseX < self.x - self.length/2:
+            self.pos = 0
+        else:
+            self.pos = (mouseX - (self.x - self.length/2)) / self.length
+
 class Button:
     text = "Default button"
     font = pygame.font.Font(None, 48)
@@ -25,6 +75,7 @@ class Button:
     def render(self):
         window.blit(self.Btn, self.rect)
 
+
     def isClicked(self, mouseX, mouseY):
         if self.rect.centerx - self.rect.width/2 < mouseX < self.rect.centerx + self.rect.width/2 and self.rect.centery - self.rect.height/2 < mouseY < self.rect.centery + self.rect.height/2:
             return 1
@@ -40,6 +91,7 @@ class MainMenu:
         font = pygame.font.Font(None, 48)
         exitBtn = Button("EXIT", width / 2, height / 2 + 50)
         tryBtn = Button("TRY", width / 2, height / 2)
+        speedSlider = Slider("GOBLIN SPEED", width / 2, height / 2 - 100, 1, 5)
         while True:
 
             for event in pygame.event.get():
@@ -57,15 +109,31 @@ class MainMenu:
                         tryBtn.__del__()
                         window.fill((0, 0, 0))
                         pygame.display.flip()
-                        game = Game(4, 0)
+                        game = Game((speedSlider.minVal + speedSlider.pos * (speedSlider.maxVal - speedSlider.minVal)), 0)
 
+                    if speedSlider.isClicked(x, y):
 
+                        speedSlider.interacting = 1
 
 
             tryBtn.render()
             exitBtn.render()
 
+
+            if speedSlider.interacting:
+
+                clicking = pygame.mouse.get_pressed()[0]
+                if not clicking:
+                    speedSlider.interacting = 0
+                else:
+                    x, y = pygame.mouse.get_pos()
+                    speedSlider.move(x, y)
+            speedSlider.render()
+
+
             pygame.display.flip()
+
+            window.fill((0, 0, 0))
             clock.tick(60)
 
 

@@ -109,7 +109,7 @@ class MainMenu:
                         tryBtn.__del__()
                         window.fill((0, 0, 0))
                         pygame.display.flip()
-                        game = Game((speedSlider.minVal + speedSlider.pos * (speedSlider.maxVal - speedSlider.minVal)), 0)
+                        game = Game((speedSlider.minVal + speedSlider.pos * (speedSlider.maxVal - speedSlider.minVal)))
 
                     if speedSlider.isClicked(x, y):
 
@@ -149,6 +149,7 @@ class Player:
         self.speed = Speed
 
     def getAngle(self):
+
         if self.x != width/2:
             if self.x < width/2:
                 return math.pi + math.atan(-(self.y - height/2) / (self.x - width/2))
@@ -212,7 +213,7 @@ class Goblin:
     goblinSpeed = 0
 
     def __init__(self, angle, goblinSpeed):
-        self.angle = 7 / 4 * math.pi
+        self.angle = angle
         self.goblinSpeed = goblinSpeed / radius
 
     def render(self):
@@ -242,7 +243,7 @@ class Goblin:
                 self.angle -= self.goblinSpeed
 
 class Game:
-    def __init__(self, goblinSpeed, assist):
+    def __init__(self, goblinSpeed):
 
         exitBtn = Button("ВЫХОД", 70,  30)
         player = Player(width/2, height/2, speed)
@@ -263,12 +264,10 @@ class Game:
                         pygame.display.flip()
                         game = MainMenu()
                 clicking = pygame.mouse.get_pressed()[0]
-                if pygame.mouse.get_pressed()[2]:
-                    print("Right pressed")
+
 
             if clicking:
                 x, y = pygame.mouse.get_pos()
-                print(x, y)
                 if abs(player.x - x) > 2 or abs(player.y - y) > 2:
                     player.update(x, y)
 
@@ -287,11 +286,9 @@ class Game:
                         clicking = pygame.mouse.get_pressed()[0]
 
                         if event.type == pygame.MOUSEBUTTONDOWN:
-                            game = Game(goblinSpeed, assist)
+                            game = Game(goblinSpeed)
 
-                    if clicking:
-                        x, y = pygame.mouse.get_pos()
-                        print(x, y)
+
 
                     pygame.draw.circle(window, (0, 64, 200), (width / 2, height / 2), radius)
                     pygame.draw.circle(window, (255, 255, 255), (width / 2, height / 2), radius * (1 / goblinSpeed), 1)
